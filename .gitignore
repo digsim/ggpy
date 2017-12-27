@@ -5,6 +5,7 @@
 build/
 dist/
 ggplot.egg-info/
+.idea/
 
 .ipynb_checkpoints/
 

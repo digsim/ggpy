@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import pandas as pd
+import numpy as np
 import os
 import sys
 
@@ -15,6 +16,11 @@ pigeons = pd.read_csv(os.path.join(_ROOT, "pigeons.csv"))
 chopsticks = pd.read_csv(os.path.join(_ROOT, "chopsticks.csv"))
 mpg = pd.read_csv(os.path.join(_ROOT, "mpg.csv"))
 salmon = pd.read_csv(os.path.join(_ROOT, "salmon.csv"))
+powerconsumption = pd.read_csv(os.path.join(_ROOT, "powerconsumption.csv"), parse_dates=[1],
+                               dtype={'DateTime': object, 'Date': object, 'Watt': np.float64, 'Timestamp': np.int64},
+                               index_col=0)
+powerconsumption['Timestamp'] = pd.to_datetime(powerconsumption['Timestamp'], unit='s')
+
 
 def load_world():
     """

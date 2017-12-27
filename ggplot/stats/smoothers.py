@@ -35,7 +35,7 @@ def lm(x, y, alpha=ALPHA):
     "fits an OLS from statsmodels. returns tuple."
     x_is_date = _isdate(x.iloc[0])
     if x_is_date:
-        x = np.array([i.toordinal() for i in x])
+        x = np.array([float(datetime.datetime.strftime(i, '%s')) for i in x])
     X = sm.add_constant(x)
     fit = sm.OLS(y, X).fit()
     prstd, iv_l, iv_u = wls_prediction_std(fit)
@@ -49,7 +49,7 @@ def lm(x, y, alpha=ALPHA):
     predict_ci_upp      = df['predict_ci_95%_upp'].values
 
     if x_is_date:
-        x = [Timestamp.fromordinal(int(i)) for i in x]
+        x = [datetime.datetime.fromtimestamp(i) for i in x]
     return (x, fittedvalues, predict_mean_ci_low, predict_mean_ci_upp)
 
 def lowess(x, y, span=SPAN):
@@ -61,7 +61,7 @@ def lowess(x, y, span=SPAN):
     x, y = map(_plot_friendly, [x,y])
     x_is_date = _isdate(x.iloc[0])
     if x_is_date:
-        x = np.array([i.toordinal() for i in x])
+        x = np.array([float(datetime.datetime.strftime(i, '%s')) for i in x])
     result = smlowess(np.array(y), np.array(x), frac=span)
     x = pd.Series(result[::,0])
     y = pd.Series(result[::,1])
@@ -71,7 +71,7 @@ def lowess(x, y, span=SPAN):
     y2 = pd.Series(upper * std +  y)
 
     if x_is_date:
-        x = [Timestamp.fromordinal(int(i)) for i in x]
+        x = [datetime.datetime.fromtimestamp(i) for i in x]
 
     return (x, y, y1, y2)
 
@@ -80,12 +80,12 @@ def mavg(x,y, window):
     x, y = map(_plot_friendly, [x,y])
     x_is_date = _isdate(x.iloc[0])
     if x_is_date:
-        x = np.array([i.toordinal() for i in x])
+        x = np.array([float(datetime.datetime.strftime(i, '%s')) for i in x])
     std_err = pd.rolling_std(y, window)
     y = pd.rolling_mean(y, window)
     y1 = y - std_err
     y2 = y + std_err
 
     if x_is_date:
-        x = [Timestamp.fromordinal(int(i)) for i in x]
+        x = [datetime.datetime.fromtimestamp(i) for i in x]
     return (x, y, y1, y2)
