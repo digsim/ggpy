@@ -48,7 +48,7 @@ class stat_smooth(geom):
     DEFAULT_AES = {'color': 'black'}
     DEFAULT_PARAMS = {'geom': 'smooth', 'position': 'identity', 'method': 'auto',
             'se': True, 'n': 80, 'fullrange': False, 'level': 0.95,
-            'span': 2/3., 'window': None}
+            'span': 2/3., 'window': None, 'dateTimeConverter': 'ordinal'}
     REQUIRED_AES = {'x', 'y'}
     _aes_renames = {'size': 'linewidth', 'linetype': 'linestyle'}
 
@@ -67,13 +67,14 @@ class stat_smooth(geom):
         level = self.params.get('level', 0.95)
         window = self.params.get('window', None)
         span = self.params.get('span', 2/3.)
+        dateConverter = self.params.get('dateTimeConverter', 'ordinal') #can either be 'ordinal' or 'strftime'
 
         if method == "lm":
-            x, y, y1, y2 = smoothers.lm(x, y, 1-level)
+            x, y, y1, y2 = smoothers.lm(x, y, 1-level, dateConverter)
         elif method == "ma":
-            x, y, y1, y2 = smoothers.mavg(x, y, window=window)
+            x, y, y1, y2 = smoothers.mavg(x, y, window=window, dateConverter=dateConverter)
         else:
-            x, y, y1, y2 = smoothers.lowess(x, y, span=span)
+            x, y, y1, y2 = smoothers.lowess(x, y, span=span, dateConverter=dateConverter)
 
         smoothed_data = pd.DataFrame(dict(x=x, y=y, y1=y1, y2=y2))
         try:  # change in Pandas-0.19
